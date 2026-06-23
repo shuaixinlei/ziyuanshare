@@ -1,0 +1,50 @@
+﻿{% extends 'base.html' %}
+{% block title %}管理用户{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1>👥 管理用户</h1>
+            <p>查看和编辑所有注册用户</p>
+        </div>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-light font-weight-bold" style="color:var(--primary-dark);border-radius:8px;">← 返回后台</a>
+    </div>
+</div>
+<div class="container" style="margin-top:-0.5rem;">
+    <div class="card-official">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background:#f5f7fa;">
+                    <tr>
+                        <th class="py-3">ID</th>
+                        <th class="py-3">用户名</th>
+                        <th class="py-3">邮箱</th>
+                        <th class="py-3">积分</th>
+                        <th class="py-3">管理员</th>
+                        <th class="py-3">注册时间</th>
+                        <th class="py-3">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td class="py-3">{{ u.id }}</td>
+                        <td class="py-3 font-weight-bold">{{ u.username }}</td>
+                        <td class="py-3">{{ u.email }}</td>
+                        <td class="py-3">{{ u.points }}</td>
+                        <td class="py-3">{% if u.is_admin %}<span class="badge badge-warning">管理员</span>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                        <td class="py-3 text-muted-official">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td class="py-3">
+                            <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="btn btn-sm btn-official-outline mr-1">编辑</a>
+                            <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}" style="display:inline" onsubmit="return confirm('确定删除用户「{{ u.username }}」吗？');">
+                                <button type="submit" class="btn btn-sm btn-danger-official">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

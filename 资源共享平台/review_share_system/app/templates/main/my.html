@@ -1,0 +1,107 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}我的主页 - 复习资料{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>👤 我的主页</h1>
+        <p>管理你的资料和个人信息</p>
+    </div>
+</div>
+
+<div class="container" style="margin-top:-0.5rem;">
+    <!-- 用户信息卡片 -->
+    <div class="card-official mb-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-3">
+                        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin-right:1rem;">
+                            {{ user.username[0] | upper }}
+                        </div>
+                        <div>
+                            <h4 class="font-weight-bold mb-0">{{ user.username }}</h4>
+                            <small class="text-muted-official">
+                                {% if user.is_admin %}
+                                    <span class="badge badge-warning">管理员</span>
+                                {% else %}
+                                    普通用户
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <table class="table table-borderless mb-0" style="font-size:0.9rem;">
+                        <tr>
+                            <td style="width:80px;color:#888;">邮箱</td>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color:#888;">积分</td>
+                            <td><span class="badge badge-official badge-success" style="font-size:0.9rem;">{{ user.points }} 分</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#888;">注册时间</td>
+                            <td>{{ user.created_at.strftime(date_format) }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-4 text-md-right mt-3 mt-md-0">
+                    <div class="d-inline-block text-center p-3" style="background:#e3f2fd;border-radius:12px;min-width:120px;">
+                        <div class="h2 font-weight-bold text-primary mb-0">{{ materials|length }}</div>
+                        <div class="text-muted-official">已上传资料</div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{{ url_for('main.upload') }}" class="btn btn-official btn-sm">📤 上传新资料</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 资料列表 -->
+    <h4 class="section-title">📂 我上传的资料</h4>
+
+    {% if materials %}
+        {% for material in materials %}
+        <div class="card-official mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1" style="min-width:0;">
+                        <h5 class="font-weight-bold text-dark mb-1">{{ material.title }}</h5>
+                        {% if material.description %}
+                            <p class="text-muted-official mb-2">{{ material.description }}</p>
+                        {% endif %}
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="badge badge-official badge-info">{{ '复习笔记' if material.material_type == 'notes' else '往年真题' }}</span>
+                            <span class="badge badge-official badge-secondary">{{ material.file_type.upper() }}</span>
+                            <small class="text-muted-official">{{ material.course.name }}</small>
+                            <small class="text-muted-official">{{ material.upload_time.strftime(date_format) }}</small>
+                            <span class="badge badge-official {{ 'badge-success' if material.is_approved else 'badge-warning' }}">
+                                {{ '已审核' if material.is_approved else '待审核' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-right ml-4" style="min-width:100px;">
+                        <div class="text-muted-official mb-2">{{ material.download_count }} 次下载</div>
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{{ url_for('main.download', material_id=material.id) }}" class="btn btn-success-official btn-sm">📥 下载</a>
+                            <form action="{{ url_for('main.delete_my_material', material_id=material.id) }}" method="POST" style="display:inline" onsubmit="return confirm('确定要删除「{{ material.title }}」吗？此操作不可恢复。');">
+                                <button type="submit" class="btn btn-danger-official btn-sm">🗑 删除</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card-official p-5 text-center">
+            <div style="font-size:3rem;margin-bottom:0.5rem;">📭</div>
+            <h5 class="text-muted">还没有上传资料</h5>
+            <p class="text-muted-official">快去上传你的第一份复习资料吧！</p>
+            <a href="{{ url_for('main.upload') }}" class="btn btn-official mt-2">📤 上传资料</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

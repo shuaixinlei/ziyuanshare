@@ -1,0 +1,64 @@
+﻿{% extends 'base.html' %}
+{% block title %}管理资料{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1>📂 管理资料</h1>
+            <p>审核和管理所有上传资料</p>
+        </div>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-light font-weight-bold" style="color:var(--primary-dark);border-radius:8px;">← 返回后台</a>
+    </div>
+</div>
+<div class="container" style="margin-top:-0.5rem;">
+    <div class="card-official">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background:#f5f7fa;">
+                    <tr>
+                        <th class="py-3">ID</th>
+                        <th class="py-3">标题</th>
+                        <th class="py-3">课程</th>
+                        <th class="py-3">类型</th>
+                        <th class="py-3">上传者</th>
+                        <th class="py-3">审核状态</th>
+                        <th class="py-3">下载</th>
+                        <th class="py-3">上传时间</th>
+                        <th class="py-3">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in materials %}
+                    <tr>
+                        <td class="py-3">{{ material.id }}</td>
+                        <td class="py-3 font-weight-bold">{{ material.title }}</td>
+                        <td class="py-3">{{ material.course.name }}</td>
+                        <td class="py-3">{{ '笔记' if material.material_type == 'notes' else '真题' }}</td>
+                        <td class="py-3">{{ material.uploader.username }}</td>
+                        <td class="py-3">
+                            {% if material.is_approved %}
+                                <span class="badge badge-official badge-success">已通过</span>
+                            {% else %}
+                                <span class="badge badge-official badge-warning">待审核</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3">{{ material.download_count }}</td>
+                        <td class="py-3 text-muted-official">{{ material.upload_time.strftime('%Y-%m-%d') }}</td>
+                        <td class="py-3">
+                            {% if not material.is_approved %}
+                                <form method="POST" action="{{ url_for('admin.approve_material', material_id=material.id) }}" style="display:inline">
+                                    <button type="submit" class="btn btn-sm btn-success-official mr-1">审核通过</button>
+                                </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('admin.delete_material', material_id=material.id) }}" style="display:inline" onsubmit="return confirm('确定删除资料「{{ material.title }}」吗？');">
+                                <button type="submit" class="btn btn-sm btn-danger-official">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

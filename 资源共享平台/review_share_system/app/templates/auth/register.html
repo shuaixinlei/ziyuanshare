@@ -1,0 +1,73 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}注册{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="margin-top:2rem;">
+    <div class="col-md-6">
+        <div class="card-official">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div style="font-size:3rem;">📝</div>
+                    <h3 class="font-weight-bold mt-2">创建账号</h3>
+                    <p class="text-muted-official">加入我们，共享优质复习资料</p>
+                </div>
+                
+                <form method="POST" id="registerForm">
+                    <div class="form-group">
+                        <label for="username" class="font-weight-500">用户名</label>
+                        <input type="text" class="form-control form-control-official" id="username" name="username" required placeholder="请输入用户名">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="font-weight-500">邮箱</label>
+                        <input type="text" class="form-control form-control-official" id="email" name="email" placeholder="请输入邮箱地址">
+                        <small id="emailHelp" class="form-text text-muted-official">请填写有效的邮箱地址，例如：user@example.com</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="font-weight-500">密码</label>
+                        <input type="password" class="form-control form-control-official" id="password" name="password" required placeholder="请设置密码">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password" class="font-weight-500">确认密码</label>
+                        <input type="password" class="form-control form-control-official" id="confirm_password" name="confirm_password" required placeholder="请再次输入密码">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-official btn-block py-2">注 册</button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-muted-official">已有账号？<a href="{{ url_for('auth.login') }}" class="font-weight-bold" style="color:var(--primary);">立即登录 →</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    var email = document.getElementById('email');
+    var emailValue = email.value.trim();
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(emailValue)) {
+        e.preventDefault();
+        email.classList.add('is-invalid');
+        
+        var feedback = email.nextElementSibling;
+        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            email.parentNode.insertBefore(feedback, email.nextSibling);
+        }
+        feedback.textContent = '请输入有效的邮箱地址（如：user@example.com）';
+    } else {
+        email.classList.remove('is-invalid');
+    }
+    
+    this.classList.add('was-validated');
+});
+</script>
+{% endblock %}

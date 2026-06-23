@@ -1,0 +1,30 @@
+﻿{% extends 'base.html' %}
+{% block title %}编辑课程{% endblock %}
+{% block content %}
+<div class="row justify-content-center" style="margin-top:2rem;">
+    <div class="col-md-6">
+        <div class="card-official">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <h4 class="font-weight-bold">✏️ 编辑课程</h4>
+                    <p class="text-muted-official">修改课程「{{ course.name }}」的信息</p>
+                </div>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="name" class="font-weight-500">课程名称</label>
+                        <input type="text" class="form-control form-control-official" id="name" name="name" value="{{ course.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="font-weight-500">分类</label>
+                        <input type="text" class="form-control form-control-official" id="category" name="category" value="{{ course.category }}" required>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-official flex-fill">💾 保存修改</button>
+                        <a href="{{ url_for('admin.manage_courses') }}" class="btn btn-outline-secondary flex-fill">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

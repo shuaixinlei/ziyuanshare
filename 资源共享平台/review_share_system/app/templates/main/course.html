@@ -1,0 +1,60 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}{{ course.name }} - 复习资料{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>📖 {{ course.name }}</h1>
+                <p><span class="badge badge-official badge-light">{{ course.category }}</span></p>
+            </div>
+            <a href="{{ url_for('main.upload', course_id=course.id) }}" class="btn btn-light font-weight-bold px-4" style="color:var(--primary-dark);border-radius:8px;">📤 上传资料</a>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-top:-0.5rem;">
+    <!-- 类型筛选 -->
+    <div class="d-flex gap-2 mb-4">
+        <a href="{{ url_for('main.course', course_id=course.id, type='all') }}" class="btn {{ 'btn-primary' if selected_type == 'all' else 'btn-outline-secondary' }} btn-sm rounded-pill px-3">全部</a>
+        <a href="{{ url_for('main.course', course_id=course.id, type='notes') }}" class="btn {{ 'btn-primary' if selected_type == 'notes' else 'btn-outline-secondary' }} btn-sm rounded-pill px-3">📑 复习笔记</a>
+        <a href="{{ url_for('main.course', course_id=course.id, type='exam') }}" class="btn {{ 'btn-primary' if selected_type == 'exam' else 'btn-outline-secondary' }} btn-sm rounded-pill px-3">📫 往年真题</a>
+    </div>
+
+    {% if materials %}
+        {% for material in materials %}
+        <div class="card-official mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1" style="min-width:0;">
+                        <h5 class="font-weight-bold text-dark mb-1">{{ material.title }}</h5>
+                        {% if material.description %}
+                            <p class="text-muted-official mb-2">{{ material.description }}</p>
+                        {% endif %}
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="badge badge-official badge-info">{{ '复习笔记' if material.material_type == 'notes' else '往年真题' }}</span>
+                            <span class="badge badge-official badge-secondary">{{ material.file_type.upper() }}</span>
+                            <small class="text-muted-official">👤 {{ material.uploader.username }}</small>
+                            <small class="text-muted-official">{{ material.upload_time.strftime(date_format) }}</small>
+                        </div>
+                    </div>
+                    <div class="text-right ml-4" style="min-width:80px;">
+                        <div class="text-muted-official mb-2">{{ material.download_count }} 次下载</div>
+                        <a href="{{ url_for('main.download', material_id=material.id) }}" class="btn btn-success-official btn-sm">📥 下载</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card-official p-5 text-center">
+            <div style="font-size:3rem;margin-bottom:0.5rem;">📭</div>
+            <h5 class="text-muted">暂无资料</h5>
+            <p class="text-muted-official">快来上传第一个资料吧！</p>
+            <a href="{{ url_for('main.upload', course_id=course.id) }}" class="btn btn-official mt-2">📤 上传资料</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}首页 - 期末复习资料共享平台{% endblock %}
+
+{% block content %}
+<!-- Hero 区域 -->
+<div class="card-official mb-4" style="background:linear-gradient(135deg, #0D47A1, #1565C0);color:#fff;border-radius:14px;">
+    <div class="card-body p-5 text-center">
+        <h1 class="display-4 font-weight-bold" style="font-size:2.2rem;">📚 期末复习资料共享平台</h1>
+        <p class="lead mb-4" style="font-size:1.1rem;opacity:0.9;">汇聚全校优秀复习笔记和历年真题，助你轻松备考</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-4 font-weight-bold" style="color:var(--primary-dark);border-radius:8px;">立即加入</a>
+            <a href="#categories" class="btn btn-outline-light btn-lg px-4" style="border-radius:8px;">浏览课程</a>
+        </div>
+    </div>
+</div>
+
+<!-- 数据统计 -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3 mb-md-0">
+        <div class="card-official text-center py-3">
+            <div class="card-body">
+                <div class="h3 font-weight-bold text-primary mb-1">{{ recent_materials|length }}+</div>
+                <div class="text-muted-official">最新资料</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3 mb-md-0">
+        <div class="card-official text-center py-3">
+            <div class="card-body">
+                <div class="h3 font-weight-bold text-success mb-1">{{ top_contributors|length }}+</div>
+                <div class="text-muted-official">贡献者</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-official text-center py-3">
+            <div class="card-body">
+                <div class="h3 font-weight-bold text-warning mb-1">{{ categories|length }}</div>
+                <div class="text-muted-official">课程分类</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 课程分类 -->
+<div class="mb-4" id="categories">
+    <h4 class="section-title">📂 课程分类</h4>
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-3 col-6 mb-3">
+            <a href="{{ url_for('main.category', category_name=category) }}" class="card-official card-hover d-block text-decoration-none">
+                <div class="card-body text-center py-4">
+                    <div class="h5 font-weight-bold text-dark mb-1">{{ category }}</div>
+                    <small class="text-muted-official">浏览该分类课程</small>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 最新上传 + 贡献者排行 -->
+<div class="row mb-4">
+    <div class="col-lg-8 mb-4 mb-lg-0">
+        <h4 class="section-title">📤 最新上传</h4>
+        {% if recent_materials %}
+            {% for material in recent_materials %}
+            <a href="{{ url_for('main.course', course_id=material.course_id) }}" class="list-group-item list-group-item-action list-group-item-official d-flex justify-content-between align-items-center py-3">
+                <div style="min-width:0;">
+                    <div class="font-weight-bold text-dark" style="font-size:0.95rem;">{{ material.title }}</div>
+                    <div class="text-muted-official mt-1">
+                        <span class="badge badge-official badge-info">{{ '笔记' if material.material_type == 'notes' else '真题' }}</span>
+                        <span class="ml-2">{{ material.course.name }}</span>
+                        <span class="ml-2">👤 {{ material.uploader.username }}</span>
+                        <span class="ml-2">{{ material.upload_time.strftime(date_format) }}</span>
+                    </div>
+                </div>
+                <span class="badge badge-primary badge-pill ml-2">{{ material.download_count }} 下载</span>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="card-official p-4 text-center text-muted">
+                <p class="mb-0">暂无资料，快来上传第一份资料吧！</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-lg-4">
+        <h4 class="section-title">🏆 贡献排行</h4>
+        <div class="card-official">
+            <div class="list-group list-group-flush">
+                {% for user in top_contributors %}
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-0">
+                    <div>
+                        <span class="font-weight-bold mr-2 text-muted" style="width:24px;display:inline-block;">
+                            {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
+                        </span>
+                        {{ user.username }}
+                    </div>
+                    <span class="badge badge-official badge-success">{{ user.points }} 分</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer bg-white border-0 text-center pt-0">
+                <a href="{{ url_for('main.leaderboard') }}" class="btn btn-official-outline btn-sm">查看完整排名 →</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

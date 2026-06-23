@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}期末复习资料共享平台{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1565C0;
+            --primary-dark: #0D47A1;
+            --primary-light: #42A5F5;
+            --accent: #FF6F00;
+            --success: #2E7D32;
+            --gray-bg: #f0f2f5;
+            --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --card-hover-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+        * { font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        body {
+            padding-top: 72px;
+            min-height: 100vh;
+            background-color: var(--gray-bg);
+            display: flex;
+            flex-direction: column;
+        }
+        main { flex: 1; }
+        /* ── 顶部导航 ── */
+        .navbar-official {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary)) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 0.5rem 0;
+        }
+        .navbar-official .navbar-brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+            color: #fff !important;
+        }
+        .navbar-official .navbar-brand small {
+            font-weight: 300;
+            font-size: 0.7rem;
+            opacity: 0.8;
+            display: block;
+            margin-top: -2px;
+        }
+        .navbar-official .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 400;
+            font-size: 0.9rem;
+            padding: 0.5rem 0.8rem !important;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .navbar-official .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff !important;
+        }
+        .navbar-official .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border-radius: 8px;
+            margin-top: 6px;
+            min-width: 180px;
+        }
+        .navbar-official .dropdown-item {
+            font-size: 0.9rem;
+            padding: 0.5rem 1.2rem;
+            color: #333;
+        }
+        .navbar-official .dropdown-item:hover {
+            background: #e3f2fd;
+            color: var(--primary);
+        }
+        .navbar-official .badge-admin {
+            background: #FF6F00;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        /* ── 按钮 ── */
+        .btn-official {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 0.45rem 1.4rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .btn-official:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(21,101,192,0.3);
+        }
+        .btn-official-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.35rem 1.3rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .btn-official-outline:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-success-official {
+            background: var(--success);
+            border: none;
+            color: #fff;
+            padding: 0.45rem 1.4rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .btn-success-official:hover {
+            background: #1B5E20;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+        .btn-danger-official {
+            background: #C62828;
+            border: none;
+            color: #fff;
+            padding: 0.45rem 1.4rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .btn-danger-official:hover {
+            background: #B71C1C;
+            transform: translateY(-1px);
+        }
+        /* ── 卡片 ── */
+        .card-official {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+        .card-official:hover {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-2px);
+        }
+        .card-official .card-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #fff;
+            border-bottom: none;
+            padding: 1rem 1.25rem;
+            font-weight: 500;
+        }
+        /* ── 列表项 ── */
+        .list-group-item-official {
+            border: none;
+            border-radius: 8px !important;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+        }
+        .list-group-item-official:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        /* ── Badge ── */
+        .badge-official {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 400;
+            font-size: 0.78rem;
+        }
+        /* ── 表单 ── */
+        .form-control-official {
+            border: 1.5px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .form-control-official:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
+        }
+        /* ── 页脚 ── */
+        .footer-official {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: rgba(255,255,255,0.7);
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+        }
+        .footer-official .footer-brand {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        /* ── 页面标题 ── */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #fff;
+            padding: 1.8rem 0;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0 20px 20px;
+        }
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin: 0;
+        }
+        .page-header p {
+            opacity: 0.85;
+            font-size: 0.95rem;
+            margin: 4px 0 0 0;
+        }
+        /* ── Alert ── */
+        .alert-official {
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        /* ── 通用间距 ── */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-light);
+            display: inline-block;
+        }
+        .text-muted-official { color: #6c757d; font-size: 0.85rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 1rem; }
+    </style>
+</head>
+<body>
+    <!-- 导航 -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-official fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                📚 复习资料共享平台
+                <small>Student Resource Sharing</small>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.leaderboard') }}">积分榜</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0 mr-3" action="{{ url_for('main.search') }}">
+                    <div class="input-group" style="width:220px;">
+                        <input class="form-control form-control-sm border-0" type="search" placeholder="搜索资料..." name="keyword" style="background:rgba(255,255,255,0.15);color:#fff;border-radius:4px 0 0 4px;">
+                        <div class="input-group-append">
+                            <button class="btn btn-sm border-0" type="submit" style="background:rgba(255,255,255,0.15);color:#fff;border-radius:0 4px 4px 0;">🔍</button>
+                        </div>
+                    </div>
+                </form>
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                👤 {{ current_user.username }}
+                                {% if current_user.is_admin %}
+                                    <span class="badge-admin ml-1">管理员</span>
+                                {% endif %}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ url_for('main.my_profile') }}">👤 我的主页</a>
+                                <a class="dropdown-item" href="{{ url_for('main.upload') }}">📤 上传资料</a>
+                                {% if current_user.is_admin %}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url_for('admin.admin_dashboard') }}">⚙️ 管理后台</a>
+                                {% endif %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">🚪 退出登录</a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">登录</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.register') }}">注册</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示 -->
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show alert-official mt-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer-official">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="footer-brand">📚 期末复习资料共享平台</div>
+                    <p class="mb-0 mt-1">汇聚优质复习笔记与历年真题，助力高效备考</p>
+                </div>
+                <div class="col-md-6 text-md-right mt-2 mt-md-0">
+                    <p class="mb-0">&copy; 2026 大学生期末复习资料共享系统 | All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

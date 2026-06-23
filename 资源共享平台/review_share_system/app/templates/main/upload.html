@@ -1,0 +1,70 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}上传资料{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="margin-top:2rem;">
+    <div class="col-md-7">
+        <div class="card-official">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div style="font-size:3rem;">📤</div>
+                    <h3 class="font-weight-bold mt-2">上传资料</h3>
+                    <p class="text-muted-official">分享你的复习资料，获得积分奖励</p>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title" class="font-weight-500">资料标题</label>
+                        <input type="text" class="form-control form-control-official" id="title" name="title" required placeholder="请输入资料标题">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description" class="font-weight-500">资料描述</label>
+                        <textarea class="form-control form-control-official" id="description" name="description" rows="3" placeholder="简要描述资料内容（选填）"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="course_id" class="font-weight-500">所属课程</label>
+                        {% if selected_course_id %}
+                            <input type="hidden" name="course_id" value="{{ selected_course_id }}">
+                            <input type="text" class="form-control form-control-official" value="{{ courses[0].category }} - {{ courses[0].name }}" disabled style="background:#f5f5f5;">
+                        {% else %}
+                            <select class="form-control form-control-official" id="course_id" name="course_id" required>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.category }} - {{ course.name }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="material_type" class="font-weight-500">资料类型</label>
+                        <select class="form-control form-control-official" id="material_type" name="material_type" required>
+                            <option value="notes">📑 复习笔记</option>
+                            <option value="exam">📫 往年真题</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="file" class="font-weight-500">上传文件</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="file" name="file" required>
+                            <label class="custom-file-label" for="file">选择文件...</label>
+                        </div>
+                        <small class="form-text text-muted-official mt-1">支持格式：PDF、Word、TXT、PPT、JPG、PNG（最大 50MB）</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-official btn-block py-2 mt-4">📤 提交上传</button>
+                </form>
+                
+                <div class="mt-4 p-3" style="background:#e3f2fd;border-radius:8px;">
+                    <p class="mb-0" style="font-size:0.9rem;color:var(--primary-dark);">
+                        <strong>💡 温馨提示：</strong>上传资料可获得 <strong>10 积分</strong>，每被下载 10 次可额外获得 5 积分。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
