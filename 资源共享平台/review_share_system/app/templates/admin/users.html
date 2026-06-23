@@ -1,50 +1,54 @@
-﻿{% extends 'base.html' %}
-{% block title %}管理用户{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}用户管理 - 复习资料平台{% endblock %}
+
 {% block content %}
-<div class="page-header">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div>
-            <h1>👥 管理用户</h1>
-            <p>查看和编辑所有注册用户</p>
-        </div>
-        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-light font-weight-bold" style="color:var(--primary-dark);border-radius:8px;">← 返回后台</a>
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">管理后台</a></li>
+        <li class="breadcrumb-item active">用户管理</li>
+    </ol>
+</nav>
+
+<div class="glass-card">
+    <div class="glass-card-header">
+        <h2 class="glass-card-title">
+            <i class="fas fa-users"></i>用户列表
+        </h2>
     </div>
-</div>
-<div class="container" style="margin-top:-0.5rem;">
-    <div class="card-official">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead style="background:#f5f7fa;">
-                    <tr>
-                        <th class="py-3">ID</th>
-                        <th class="py-3">用户名</th>
-                        <th class="py-3">邮箱</th>
-                        <th class="py-3">积分</th>
-                        <th class="py-3">管理员</th>
-                        <th class="py-3">注册时间</th>
-                        <th class="py-3">操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for u in users %}
-                    <tr>
-                        <td class="py-3">{{ u.id }}</td>
-                        <td class="py-3 font-weight-bold">{{ u.username }}</td>
-                        <td class="py-3">{{ u.email }}</td>
-                        <td class="py-3">{{ u.points }}</td>
-                        <td class="py-3">{% if u.is_admin %}<span class="badge badge-warning">管理员</span>{% else %}<span class="text-muted">—</span>{% endif %}</td>
-                        <td class="py-3 text-muted-official">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
-                        <td class="py-3">
-                            <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="btn btn-sm btn-official-outline mr-1">编辑</a>
-                            <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}" style="display:inline" onsubmit="return confirm('确定删除用户「{{ u.username }}」吗？');">
-                                <button type="submit" class="btn btn-sm btn-danger-official">删除</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div style="padding: 0;">
+        {% if users %}
+            {% for user in users %}
+            <div class="material-item" style="cursor: default;">
+                <div class="material-item-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="material-item-content">
+                    <div class="material-item-title">{{ user.username }} {% if user.is_admin %}<span class="badge badge-danger ml-2">管理员</span>{% endif %}</div>
+                    <div class="material-item-meta">
+                        <span><i class="fas fa-envelope"></i>{{ user.email }}</span>
+                        <span><i class="fas fa-star"></i>{{ user.points }} 积分</span>
+                        <span><i class="fas fa-clock"></i>{{ user.register_time.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                </div>
+                <div class="material-item-stats">
+                    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-primary btn-sm" style="margin-right: 8px;">
+                        <i class="fas fa-edit"></i> 编辑
+                    </a>
+                    {% if not user.is_admin %}
+                    <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('确定要删除该用户吗？')">
+                        <i class="fas fa-trash"></i> 删除
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-10 text-muted">
+                <i class="fas fa-users fa-5x mb-4"></i>
+                <p style="font-size: 16px;">暂无用户</p>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -1,4 +1,4 @@
-﻿from flask import Flask
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
@@ -11,31 +11,28 @@ login_manager.login_message_category = 'info'
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-
+    
     db.init_app(app)
     login_manager.init_app(app)
-
+    
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
-
+    
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
-
+    
     from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp)
-
+    
     with app.app_context():
         db.create_all()
         from app.models import User, Course
         admin = User.query.filter_by(is_admin=True).first()
         if not admin:
             from werkzeug.security import generate_password_hash
-            admin = User(
-                username=app.config['ADMIN_USERNAME'],
-                email=app.config['ADMIN_EMAIL'],
-                password_hash=generate_password_hash(app.config['ADMIN_PASSWORD']),
-                is_admin=True
-            )
+            admin = User(username='admin', email='admin@example.com', 
+                         password_hash=generate_password_hash('admin123'), 
+                         is_admin=True)
             db.session.add(admin)
             db.session.commit()
         if not Course.query.first():
@@ -53,5 +50,5 @@ def create_app(config_class=Config):
             ]
             db.session.add_all(courses)
             db.session.commit()
-
+    
     return app

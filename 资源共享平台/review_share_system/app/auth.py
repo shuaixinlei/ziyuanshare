@@ -1,4 +1,3 @@
-﻿import re
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db
@@ -16,12 +15,6 @@ def register():
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        
-        # 邮箱格式校验
-        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
-        if not re.match(email_regex, email):
-            flash('邮箱格式不正确', 'danger')
-            return redirect(url_for('auth.register'))
         
         if password != confirm_password:
             flash('两次输入的密码不一致', 'danger')

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}管理后台 - 复习资料平台{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">首页</a></li>
+        <li class="breadcrumb-item active">管理后台</li>
+    </ol>
+</nav>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="glass-card p-4">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-4">
+                <i class="fas fa-file-alt text-white"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold" style="color: var(--text-primary);">{{ pending_count }}</div>
+                <div class="text-muted" style="color: var(--text-muted);">待审核资料</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mr-4">
+                <i class="fas fa-check-circle text-white"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold" style="color: var(--text-primary);">{{ approved_count }}</div>
+                <div class="text-muted" style="color: var(--text-muted);">已审核通过</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mr-4">
+                <i class="fas fa-users text-white"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold" style="color: var(--text-primary);">{{ user_count }}</div>
+                <div class="text-muted" style="color: var(--text-muted);">注册用户</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="glass-card p-4">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center mr-4">
+                <i class="fas fa-book text-white"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold" style="color: var(--text-primary);">{{ course_count }}</div>
+                <div class="text-muted" style="color: var(--text-muted);">课程数量</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card">
+    <div class="glass-card-header">
+        <h2 class="glass-card-title">
+            <i class="fas fa-clock"></i>待审核资料
+        </h2>
+    </div>
+    <div style="padding: 0;">
+        {% if pending_materials %}
+            {% for material in pending_materials %}
+            <div class="material-item" style="cursor: default;">
+                <div class="material-item-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="material-item-content">
+                    <div class="material-item-title">{{ material.title }}</div>
+                    <div class="material-item-meta">
+                        <span><i class="fas fa-book"></i>{{ material.course.name }}</span>
+                        <span><i class="fas fa-user"></i>{{ material.uploader.username }}</span>
+                        <span><i class="fas fa-clock"></i>{{ material.upload_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                </div>
+                <div class="material-item-stats">
+                    <a href="{{ url_for('admin.approve', material_id=material.id) }}" class="btn btn-primary btn-sm" style="margin-right: 8px;">
+                        <i class="fas fa-check"></i> 批准
+                    </a>
+                    <a href="{{ url_for('admin.reject', material_id=material.id) }}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-times"></i> 拒绝
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-10 text-muted">
+                <i class="fas fa-check-circle fa-5x mb-4"></i>
+                <p style="font-size: 16px;">暂无待审核资料</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

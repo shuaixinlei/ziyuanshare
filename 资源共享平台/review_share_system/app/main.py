@@ -1,4 +1,4 @@
-﻿import os
+import os
 from flask import Blueprint, render_template, redirect, url_for, flash, request, send_from_directory
 from flask_login import current_user, login_required
 from app import db
@@ -11,15 +11,28 @@ def index():
     categories = Course.query.with_entities(Course.category).distinct().all()
     categories = [c[0] for c in categories]
     
+    courses_by_category = {}
+    for category in categories:
+        count = Course.query.filter_by(category=category).count()
+        courses_by_category[category] = count
+    
     recent_materials = Material.query.filter_by(is_approved=True).order_by(Material.upload_time.desc()).limit(6).all()
     
     top_contributors = User.query.filter_by(is_admin=False).order_by(User.points.desc()).limit(5).all()
     
+    total_materials = Material.query.filter_by(is_approved=True).count()
+    total_courses = Course.query.count()
+    total_users = User.query.count()
+    
     return render_template('main/index.html', 
                            categories=categories,
+                           courses_by_category=courses_by_category,
                            recent_materials=recent_materials,
                            top_contributors=top_contributors,
-                           date_format='%Y-%m-%d')
+                           total_materials=total_materials,
+                           total_courses=total_courses,
+                           total_users=total_users)
+
 @bp.route('/category/<category_name>')
 def category(category_name):
     courses = Course.query.filter_by(category=category_name).all()
@@ -43,43 +56,38 @@ def course(course_id):
     return render_template('main/course.html', 
                            course=course,
                            materials=materials,
-                           selected_type=selected_type,
-                           date_format='%Y-%m-%d')
+                           selected_type=selected_type)
+
 @bp.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
-    selected_course_id = request.args.get('course_id', type=int)
-    if selected_course_id:
-        course = Course.query.get_or_404(selected_course_id)
-        courses = [course]
-    else:
-        courses = Course.query.all()
-
+    courses = Course.query.all()
+    
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
         course_id = request.form['course_id']
         material_type = request.form['material_type']
-
+        
         if 'file' not in request.files:
             flash('请选择文件', 'danger')
             return redirect(url_for('main.upload'))
-
+        
         file = request.files['file']
-
+        
         if file.filename == '':
             flash('请选择文件', 'danger')
             return redirect(url_for('main.upload'))
-
+        
         if file:
             from app import create_app
             app = create_app()
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-
+            
             file_type = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'unknown'
-
+            
             material = Material(
                 title=title,
                 description=description,
@@ -89,42 +97,15 @@ def upload():
                 uploader_id=current_user.id,
                 course_id=course_id
             )
-
+            
             db.session.add(material)
             current_user.add_points(10)
             db.session.commit()
-
+            
             flash('上传成功！已获得10积分', 'success')
             return redirect(url_for('main.index'))
-
-    return render_template('main/upload.html', courses=courses, selected_course_id=selected_course_id)
-
-@bp.route('/my')
-@login_required
-def my_profile():
-    materials = Material.query.filter_by(uploader_id=current_user.id).order_by(Material.upload_time.desc()).all()
-    return render_template('main/my.html', user=current_user, materials=materials, date_format='%Y-%m-%d %H:%M')
-
-@bp.route('/my/delete/<int:material_id>', methods=['POST'])
-@login_required
-def delete_my_material(material_id):
-    material = Material.query.get_or_404(material_id)
     
-    if material.uploader_id != current_user.id:
-        flash('无权删除此资料', 'danger')
-        return redirect(url_for('main.my_profile'))
-    
-    from app import create_app
-    app = create_app()
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], material.file_path)
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    
-    db.session.delete(material)
-    db.session.commit()
-    
-    flash('资料已删除', 'success')
-    return redirect(url_for('main.my_profile'))
+    return render_template('main/upload.html', courses=courses)
 
 @bp.route('/download/<int:material_id>')
 def download(material_id):
@@ -163,4 +144,3 @@ def search():
     return render_template('main/search.html', materials=materials, keyword=keyword)
 
 from werkzeug.utils import secure_filename
-
